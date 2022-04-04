@@ -10,11 +10,10 @@ logger = logging.getLogger('basic_logger')
 # logging.FileHandler
 # formatter=  logging.Formatter
 class Logger:
-    def __init__(self, logs_severity, handler_types):
+    def __init__(self, logs_severity: str, handler_types):
         self.handler_types = handler_types
         self.logs_severity = logs_severity.upper()
         # self.format = format
-        logger = logging.getLogger()
         logging.getLogger().hasHandlers()
 
         self.logger.setLevel(self.logs_severity)
@@ -23,7 +22,8 @@ class Logger:
 
 
     def set_logger(self):
-        return logging.getLogger(os.path.basename(os.getcwd()))
+        logger = logging.getLogger(os.path.basename(os.getcwd())) if not logging.getLogger().hasHandlers() else logging.getLogger()
+        return logger
     # def set_logs_severity(self):
     #     return self.logger.setLevel(self.logs_severity)
 
