@@ -3,12 +3,14 @@ import logging
 import os
 import sys
 from streamjson_handler import StreamJsonHandler
+from logging import Handler
 
 root_logger = logging.getLogger()
 
 
-class Logger:
+class Logger_formats(Handler):
     def __init__(self, json_file_name, log_file):
+        super().__init__()
         self.logger = logging.getLogger(os.path.basename(__file__))
         print(self.logger)
         self.json_file_name = json_file_name
@@ -32,18 +34,18 @@ class Logger:
         stream_handler.setFormatter(stream_formatter)
         self.logger.addHandler(stream_handler)
 
-    def set_json_stream_handler(self, log_format):
-        json_stream_handler = StreamJsonHandler()
+    def set_json_stream_handler(self, log_format,level):
+        json_stream_handler = StreamJsonHandler(level=level)
         json_stream_formatter = logging.Formatter(log_format)
         json_stream_handler.setFormatter(json_stream_formatter)
         self.logger.addHandler(json_stream_handler)
 
 
-shay = Logger('shay.json', 'check.log')
-shay.logger.setLevel(logging.DEBUG)
+shay = Logger_formats('shay.json', 'check.log')
+level = shay.logger.setLevel(logging.DEBUG)
 # handler1 = shay.set_stream_handler('%(asctime)-15s %(levelname)-8s %(message)s')
 
-handler2 = shay.set_json_stream_handler('%(asctime)-15s %(levelname)-8s %(message)s')
+handler2 = shay.set_json_stream_handler('%(asctime)-15s %(levelname)-8s %(message)s', level)
 shay.logger.error("the class working")
 
 # handler2 = shay.set_file_handler('%(asctime)-15s %(levelname)-8s %(message)s')

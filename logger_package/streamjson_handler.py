@@ -12,7 +12,10 @@ class StreamJsonHandler(Logger,Handler):
 
     terminator = '\n'
 
-    def __init__(self, stream=None):
+    def __init__(self,level,  stream=None):
+        self.level= level
+        Handler.__init__(self, level='NOTSET')
+        Logger.__init__(self, name='None')
         """
         Initialize the handler.
 
@@ -22,6 +25,7 @@ class StreamJsonHandler(Logger,Handler):
         if stream is None:
             stream = sys.stderr
         self.stream = stream
+
 
     def flush(self):
         """
@@ -49,7 +53,6 @@ class StreamJsonHandler(Logger,Handler):
             msg = json.dumps(self.format(record))
             stream = self.stream
             # issue 35046: merged two stream.writes into one.
-
             stream.write(msg + self.terminator)
             self.flush()
         except RecursionError:  # See issue 36272
