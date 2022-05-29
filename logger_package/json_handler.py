@@ -10,7 +10,7 @@ root_logger = logging.getLogger()
 
 class Logger_formats(Logger):
     def __init__(self, log_file=None):
-        Logger.__init__(self, name=os.path.basename(__file__))
+        Logger.__init__(self, name='None')
         self.logger = logging.getLogger(os.path.basename(__file__))
         self.log_file_name = log_file
 
@@ -44,12 +44,11 @@ shay = Logger_formats('tests.log')
 level = shay.logger.setLevel(logging.DEBUG)
 # handler1 = shay.set_stream_handler('%(asctime)-15s %(levelname)-8s %(message)s')
 
-handler2 = shay.set_json_stream_handler(str({"time":"%(asctime)-15s" ,"level": "%(levelname)-8s" ,"message": "%(message)s"}))
+handler2 = shay.set_json_stream_handler(({"time":"%(asctime)-15s" ,"level": "%(levelname)-8s" ,"message": "%(message)s"}))
 shay.logger.error("the class working")
-
+logging.LogRecord
 # handler2 = shay.set_file_handler('%(asctime)-15s %(levelname)-8s %(message)s')
 
-logging.LogRecord
 shay.write_json_logs_to_console()
 # logger = logging.getLogger()
 # logger.setLevel(logging.DEBUG)

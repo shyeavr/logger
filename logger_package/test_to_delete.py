@@ -1,45 +1,53 @@
+import json
 import logging
+import sys
+
+import json_logging
 
 
-class MyLogger(logging.Logger):
-    root_logger = None
-    root_handlers = None
-    log_level = None
-
-    def __init__(self):
-        self.log = logging.getLogger('fsdfsfsf')
-
-    @classmethod
-    def update_root_config(cls, handlers=None, log_level=logging.DEBUG):
-        cls.root_handlers = handlers
-
-    @classmethod
-    def show_root_config(cls):
-        return cls.root_handlers
-
-    def create_object_var(self, my_var):
-        self.my_var = my_var
-
-    def get_my_var(self):
-        return self.my_var
-
-ml1 = MyLogger()
-ml2 = MyLogger()
-
-ml1.update_root_config(handlers='test from ml1')
-ml2.update_root_config(handlers='test from ml2')
-
-s = ml1.show_root_config
-print(ml1.root_handlers)
-
-ml1.create_object_var('shay')
-ml2.create_object_var('ronen')
-
-print(ml1.get_my_var())
-print(ml2.get_my_var())
-ml1.debug()
+def extra(**kw):
+    '''Add the required nested props layer'''
+    return {'extra': {'props': kw}}
 
 
+class CustomJSONLog(json_logging.formatters.JSONLogFormatter):
+    """
+    Customized logger
+    """
+
+    def format(self, record):
+        json_customized_log_object = ({
+            "customized_prop": "customized value",
+            "message": record.getMessage()
+        })
+
+        return json.dumps(json_customized_log_object)
+
+json_logging.init_non_web(custom_formatter=CustomJSONLog, enable_json=True)
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler(sys.stderr))
+
+logger.info('sample log message')
 
 
+def create_logger(log_formatter=None):
+    """
+    Generic utility function to get logger object with fixed configurations
+    :return:
+    logger object
+    """
+    json_logging.ENABLE_JSON_LOGGING = True
+    json_logging.init_non_web(custom_formatter=CustomJSONLog, enable_json=True)
+    logger = logging.getLogger(__name__)
+    logging.basicConfig()
+    json_logging.config_root_logger()
+    logger.setLevel(logging.DEBUG)
+    logging.addLevelName(logging.ERROR, 'error')
+    logging.addLevelName(logging.WARNING, 'warning')
+    logging.addLevelName(logging.INFO, 'info')
+    logging.addLevelName(logging.DEBUG, 'debug')
+    logger.addHandler(logging.NullHandler())
+    return logger
 
